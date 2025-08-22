@@ -2,6 +2,7 @@ const T = require('../locales/ru');
 const t = require('../locales/ru').checkout;
 const db = require('../db');
 const { createOrder } = require('../woo');
+const notifyNewOrder = require('./notification');
 
 // Тимчасове сховище станів користувачів
 const orderStates = {};
@@ -175,6 +176,7 @@ async function finalizeOrder(bot, chatId, userId, state) {
         ].join('\n');
 
         await bot.sendMessage(chatId, bill);
+        await notifyNewOrder(bot, orderResponse);
 
     } catch (err) {
         console.error(T.Error, err.response?.data || err.message);

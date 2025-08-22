@@ -1,8 +1,6 @@
 function qtyKeyboard(productId) {
-    //console.log(productId);
     return {
         inline_keyboard: [
-          //  [{ text: 'Выберите количество 👇', callback_data: 'noop' }],
             [
                 { text: '1️⃣', callback_data: `qty_${productId}_1` },
                 { text: '2️⃣', callback_data: `qty_${productId}_2` },

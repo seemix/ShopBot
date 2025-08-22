@@ -1,3 +1,5 @@
+const T = require('../locales/ru');
+const t = require('../locales/ru').mainMenu;
 const { getBrands, getCategories } = require('../woo');
 
 function mainMenuHandler(bot) {
@@ -24,7 +26,7 @@ function mainMenuHandler(bot) {
             }
 
             if (!subMenu || subMenu.length === 0) {
-                return bot.sendMessage(chatId, '😔 Не знайдено!');
+                return bot.sendMessage(chatId, t.notFound);
             }
 
             const chunk = (arr, size) =>
@@ -42,11 +44,11 @@ function mainMenuHandler(bot) {
                 }
             };
 
-            bot.sendMessage(chatId, 'Сделайте выбор:', subMenuKeyboard);
+            bot.sendMessage(chatId, t.makeChoice, subMenuKeyboard);
 
         } catch (e) {
-            console.error('Помилка у mainMenuHandler:', e);
-            bot.sendMessage(chatId, '⚠️ Сталася помилка, спробуйте ще раз.');
+            console.error(T.Error, e);
+            bot.sendMessage(chatId, t.errorTryAgain);
         }
     });
 }

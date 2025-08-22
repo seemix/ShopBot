@@ -6,9 +6,9 @@ const { saveUser, getUser } = require('../db.js');
 
 module.exports = function startHandler(bot) {
 
-    const sendMainMenu = (chatId, userName) => {
-        bot.sendMessage(chatId, userName+t.welcome, { reply_markup: rootMenu });
-        bot.sendMessage(chatId, '👇', { reply_markup: mainMenu });
+    const sendMainMenu = async (chatId, userName) => {
+        await bot.sendMessage(chatId, userName+t.welcome, { reply_markup: rootMenu });
+        await bot.sendMessage(chatId, '👇', { reply_markup: mainMenu });
     };
 
     bot.onText(/\/start/, (msg) => {

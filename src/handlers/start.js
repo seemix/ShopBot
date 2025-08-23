@@ -14,7 +14,6 @@ module.exports = function startHandler(bot) {
     bot.onText(/\/start/, async (msg) => {
         const chatId = msg.chat.id;
         const user = await getUser(String(msg.from.id));
-        console.log(user);
 
         if (!user) {
             // Запит телефону

@@ -1,7 +1,7 @@
 const t = require('../locales/ru').products;
 const T = require('../locales/ru');
 const woo = require('../woo');
-const db = require('../db'); // для збереження кошика користувача
+const db = require('../db/services'); // для збереження кошика користувача
 const qtyKeyboard = require('../keyboards/quantityMenu');
 
 module.exports = function productsHandler(bot) {

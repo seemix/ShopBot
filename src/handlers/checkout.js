@@ -1,6 +1,6 @@
 const T = require('../locales/ru');
 const t = require('../locales/ru').checkout;
-const db = require('../db');
+const db = require('../db/services');
 const { createOrder } = require('../woo');
 const notifyNewOrder = require('./notification');
 
@@ -17,7 +17,7 @@ module.exports = function orderHandler(bot) {
 
         await bot.answerCallbackQuery(query.id);
 
-        const cart = db.getCart(userId);
+        const cart = await db.getCart(userId);
         if (!cart.length) {
             return bot.sendMessage(chatId, t.emptyCartImpossibleToCheckout);
         }
@@ -55,8 +55,8 @@ module.exports = function orderHandler(bot) {
                 await bot.answerCallbackQuery(query.id);
 
                 // отримати профіль користувача
-                const user = db.getUser(userId);
-                state.phone = user.phone// припустимо, є метод getUser(id)
+                const user = await db.getUser(userId);
+                state.phone = user.phone;
                 if (user?.name && user?.address) {
                     state.name = user.name;
                     state.address = user.address;

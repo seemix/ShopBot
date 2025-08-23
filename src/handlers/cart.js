@@ -1,6 +1,6 @@
 const T = require('../locales/ru');
 const t = require('../locales/ru').cart;
-const db = require('../db');
+const db = require('../db/services');
 const buildCartKeyboard = require('../keyboards/cartMenu');
 
 module.exports = function cartHandler(bot) {
@@ -11,7 +11,7 @@ module.exports = function cartHandler(bot) {
         const chatId = msg.chat.id;
         const userId = String(msg.from.id);
 
-        const cart = db.getCart(userId);
+        const cart = await db.getCart(userId);
         if (!cart.length) {
             return bot.sendMessage(chatId, t.yourCartIsEmpty);
         }

@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 });
 
 // Render потребує відкритий порт
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3017;
 app.listen(PORT, () => {
     console.log(`🌐 Web service running on port ${PORT}`);
 });

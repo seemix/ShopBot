@@ -1,6 +1,6 @@
 const T = require('../locales/ru');
 const t = require('../locales/ru').orders;
-const { getUser } = require('../db');
+const { getUser } = require('../db/services');
 const { getOrdersByPhone } = require('../woo');
 
 module.exports = function ordersHandler(bot) {
@@ -8,7 +8,7 @@ module.exports = function ordersHandler(bot) {
         const chatId = msg.chat.id;
 
         if (msg.text === T.Orders) {
-            const user = getUser(String(chatId));
+            const user = await getUser(String(chatId));
 
             if (!user) {
                 return bot.sendMessage(chatId, t.noOrdersYet);

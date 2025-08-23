@@ -2,7 +2,7 @@ const T = require('../locales/ru');
 const t = require('../locales/ru').start;
 const mainMenu = require('../keyboards/mainMenu.js');
 const rootMenu = require('../keyboards/rootMenu.js');
-const { saveUser, getUser } = require('../db.js');
+const { saveUser, getUser } = require('../db/services');
 
 module.exports = function startHandler(bot) {
 
@@ -11,9 +11,10 @@ module.exports = function startHandler(bot) {
         await bot.sendMessage(chatId, '👇', { reply_markup: mainMenu });
     };
 
-    bot.onText(/\/start/, (msg) => {
+    bot.onText(/\/start/, async (msg) => {
         const chatId = msg.chat.id;
-        const user = getUser(String(msg.from.id));
+        const user = await getUser(String(msg.from.id));
+        console.log(user);
 
         if (!user) {
             // Запит телефону

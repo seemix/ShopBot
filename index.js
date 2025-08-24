@@ -1,11 +1,12 @@
 require('dotenv').config();
-
-const startHandler = require('./src/handlers/start');
-const mainMenuHandler = require('./src/handlers/mainMenu');
-const productsHandler = require('./src/handlers/products');
-const cartHandler = require('./src/handlers/cart');
-const checkoutHandler = require('./src/handlers/checkout');
-const ordersHandler = require('./src/handlers/orders');
+const {
+    cartHandler,
+    checkoutHandler,
+    mainMenuHandler,
+    ordersHandler,
+    productsHandler,
+    startHandler
+} = require('./src/handlers');
 const bot = require('./src/bot');
 
 startHandler(bot);

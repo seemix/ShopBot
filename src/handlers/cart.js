@@ -1,7 +1,7 @@
 const T = require('../locales/ru');
 const t = require('../locales/ru').cart;
 const db = require('../db/services');
-const buildCartView = require('./buildCartView');
+const buildCartView = require('../services/buildCartView');
 
 module.exports = function cartHandler(bot) {
     // Показати кошик по звичайній кнопці

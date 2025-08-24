@@ -1,6 +1,6 @@
 const t = require('../locales/ru').checkout;
 const db = require('../db/services');
-const finalizeOrder = require('./finalizeOrder');
+const finalizeOrder = require('../services/finalizeOrder');
 
 const orderStates = {};
 

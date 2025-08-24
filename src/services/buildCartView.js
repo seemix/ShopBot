@@ -1,5 +1,5 @@
-const { cart: t } = require('../locales/ru');
 const T = require('../locales/ru');
+const { cart: t } = require('../locales/ru');
 const buildCartKeyboard = require('../keyboards/cartMenu');
 
 module.exports = function buildCartView(cart) {

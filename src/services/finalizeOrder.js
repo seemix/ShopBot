@@ -20,7 +20,7 @@ module.exports = async function finalizeOrder(bot, chatId, userId, state) {
                 quantity: item.quantity
             });
 
-            billLines.push(`• ${item.quantity} × ${item.name} = ${lineTotal.toFixed(2)} MDL`);
+            billLines.push(`• ${item.quantity} × ${item.name} = ${lineTotal.toFixed(2)} ${T.Currency}`);
         }
 
         const orderData = {
@@ -49,7 +49,7 @@ module.exports = async function finalizeOrder(bot, chatId, userId, state) {
             `${t.yourOrder}`,
             billLines.join('\n'),
             `----------------------`,
-            `${t.total} ${total.toFixed(2)} MDL`,
+            `${t.total} ${total.toFixed(2)} ${T.Currency}`,
             ``,
             `👤 ${state.name}`,
             `🏠 ${state.address}`,

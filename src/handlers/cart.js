@@ -1,7 +1,7 @@
 const T = require('../locales/ru');
 const t = require('../locales/ru').cart;
 const db = require('../db/services');
-const buildCartKeyboard = require('../keyboards/cartMenu');
+const buildCartView = require('./buildCartView');
 
 module.exports = function cartHandler(bot) {
     // Показати кошик по звичайній кнопці
@@ -42,19 +42,19 @@ module.exports = function cartHandler(bot) {
 
             if (isInc) {
                 const productId = data.slice(4);
-                db.updateCartQuantity(1, userId, productId);
+                await db.updateCartQuantity(1, userId, productId);
             } else if (isDec) {
                 const productId = data.slice(4);
-                db.updateCartQuantity(-1, userId, productId);
+                await db.updateCartQuantity(-1, userId, productId);
             } else if (isDel) {
                 const productId = data.slice(4);
-                db.removeItem(userId, productId);
+                await db.removeItem(userId, productId);
             } else if (isClear) {
-                db.clearCart(userId);
+                await db.clearCart(userId);
             }
 
             // оновлюємо саме те повідомлення, з якого натиснули кнопку
-            const updatedCart = db.getCart(userId);
+            const updatedCart = await db.getCart(userId);
 
             if (updatedCart.length) {
                 const { text, keyboard } = buildCartView(updatedCart);
@@ -75,28 +75,15 @@ module.exports = function cartHandler(bot) {
             console.error(T.Error, err);
             // на всяк: якщо редагування не вдалось — просто надішлемо нове повідомлення
             try {
-                const updatedCart = db.getCart(userId);
+                const updatedCart = await db.getCart(userId);
                 if (updatedCart.length) {
                     const { text, keyboard } = buildCartView(updatedCart);
                     await bot.sendMessage(chatId, text, { reply_markup: keyboard });
                 } else {
                     await bot.sendMessage(chatId, t.yourCartIsEmpty);
                 }
-            } catch (_) {}
+            } catch (_) {
+            }
         }
     });
 };
-
-// допоміжна функція рендеру тексту і клавіатури
-function buildCartView(cart) {
-    let total = 0;
-    let text = t.yourCart+'\n\n';
-    for (const item of cart) {
-        const lineTotal = Number(item.price) * Number(item.quantity);
-        total += lineTotal;
-        text += `${item.name}\n${t.quantity} ${item.quantity} · 💵 ${lineTotal.toFixed(2)}\n\n`;
-    }
-    text += `${t.totalSum} ${total.toFixed(2)} MDL`;
-
-    return { text, keyboard: buildCartKeyboard(cart) };
-}

@@ -1,7 +1,7 @@
 const t = require('../locales/ru').products;
 const T = require('../locales/ru');
 const woo = require('../woo');
-const db = require('../db/services'); // для збереження кошика користувача
+const db = require('../db/services');
 const qtyKeyboard = require('../keyboards/quantityMenu');
 
 module.exports = function productsHandler(bot) {
@@ -25,7 +25,7 @@ module.exports = function productsHandler(bot) {
                 }
 
                 for (const p of products) {
-                    let caption = `*${p.name}*  💵 ${p.price} ${p.currency || 'MDL'}`;
+                    let caption = `*${p.name}*  💵 ${p.price} ${T.Currency}`;
                     if (p.short_description) {
                         caption += `\n\n${p.short_description.replace(/<\/?[^>]+(>|$)/g, '')}`;
                     }
@@ -60,13 +60,26 @@ module.exports = function productsHandler(bot) {
                     return bot.answerCallbackQuery(query.id, { text: t.goodsNotFound });
                 }
 
-                await bot.sendMessage(chatId, t.chooseQuantity, {
-                    reply_markup: qtyKeyboard(productId)
-                });
-
+                // Змінюємо inline-клавіатуру в тому самому повідомленні
                 await bot.editMessageReplyMarkup(
-                    { inline_keyboard: [[{ text: t.alreadyAdded, callback_data: 'noop' }]] },
-                    { chat_id: chatId, message_id: query.message.message_id }
+                    {
+                        inline_keyboard: qtyKeyboard(productId).inline_keyboard
+                    },
+                    {
+                        chat_id: chatId,
+                        message_id: query.message.message_id
+                    }
+                );
+
+                // (опціонально) змінити текст повідомлення, щоб показати "Оберіть кількість"
+                await bot.editMessageCaption(
+                    `${query.message.caption || query.message.text}\n\n${t.chooseQuantity}`,
+                    {
+                        chat_id: chatId,
+                        message_id: query.message.message_id,
+                        parse_mode: 'Markdown',
+                        reply_markup: qtyKeyboard(productId)
+                    }
                 );
 
                 bot.answerCallbackQuery(query.id);
@@ -80,7 +93,7 @@ module.exports = function productsHandler(bot) {
             const [, productId, qty] = query.data.split('_');
             try {
                 const product = await woo.getProductById(productId);
-
+                // Додаємо товар у кошик
                 await db.addToCart(
                     String(query.from.id),
                     productId,
@@ -89,10 +102,27 @@ module.exports = function productsHandler(bot) {
                     product.price
                 );
 
-                await bot.deleteMessage(chatId, query.message.message_id);
-                bot.answerCallbackQuery(query.id, { text: `${t.added} ${qty} ${t.pcs}` });
+                // Відповідаємо юзеру
+                await bot.answerCallbackQuery(query.id, { text: t.addedToCart });
+
+                // Формуємо клавіатуру з "вже додано"
+                const updatedKeyboard = {
+                    inline_keyboard: [
+                        [{ text: t.alreadyAdded, callback_data: 'noop' }]
+                    ]
+                };
+
+                // Замінюємо клавіатуру під тим самим повідомленням з товаром
+                await bot.editMessageReplyMarkup(
+                    updatedKeyboard,
+                    {
+                        chat_id: chatId,
+                        message_id: query.message.message_id
+                    }
+                );
+
             } catch (err) {
-                console.error('Помилка при додаванні:', err.message);
+                console.error(t.errorAddingToCart, err.message);
                 bot.answerCallbackQuery(query.id, { text: T.Error });
             }
         }

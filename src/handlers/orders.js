@@ -25,10 +25,10 @@ module.exports = function ordersHandler(bot) {
 
             orders.forEach(order => {
                 const dateObj = new Date(order.date_created);
-                const date = dateObj.toLocaleDateString('uk-UA');
-                const time = dateObj.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-                const itemsList = order.line_items.map(item => `- ${item.name} x ${item.quantity}шт.`).join('\n');
-                response += `🗓️ ${date} ${time}\n${itemsList}\n${t.total}${order.total} MDL\n\n`;
+                const date = dateObj.toLocaleDateString(T.Locale);
+                const time = dateObj.toLocaleTimeString(T.Locale, { hour: '2-digit', minute: '2-digit' });
+                const itemsList = order.line_items.map(item => `- ${item.name} x ${item.quantity}${T.Pcs}`).join('\n');
+                response += `🗓️ ${date} ${time}\n${itemsList}\n${t.total}${order.total} ${T.Currency}\n\n`;
             });
 
             bot.sendMessage(chatId, response);

@@ -112,7 +112,7 @@ module.exports = function productsHandler(bot) {
                 };
 
                 await bot.editMessageCaption(
-                    `${product.name} — ${qty} ${T.Pcs}`,
+                    `*${product.name}*  💵 ${product.price} ${T.Currency} — ${qty} ${T.Pcs}`,
                     {
                         chat_id: chatId,
                         message_id: query.message.message_id,

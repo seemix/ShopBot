@@ -93,7 +93,7 @@ module.exports = function productsHandler(bot) {
             const [, productId, qty] = query.data.split('_');
             try {
                 const product = await woo.getProductById(productId);
-                // Додаємо товар у кошик
+
                 await db.addToCart(
                     String(query.from.id),
                     productId,
@@ -102,22 +102,21 @@ module.exports = function productsHandler(bot) {
                     product.price
                 );
 
-                // Відповідаємо юзеру
-                await bot.answerCallbackQuery(query.id, { text: t.addedToCart });
+                await bot.answerCallbackQuery(query.id, { text: t.alreadyAdded });
 
-                // Формуємо клавіатуру з "вже додано"
+                // Формуємо нову клавіатуру – кнопка вже не активна
                 const updatedKeyboard = {
                     inline_keyboard: [
                         [{ text: t.alreadyAdded, callback_data: 'noop' }]
                     ]
                 };
 
-                // Замінюємо клавіатуру під тим самим повідомленням з товаром
-                await bot.editMessageReplyMarkup(
-                    updatedKeyboard,
+                await bot.editMessageCaption(
+                    `${product.name} — ${qty} ${T.Pcs}`,
                     {
                         chat_id: chatId,
-                        message_id: query.message.message_id
+                        message_id: query.message.message_id,
+                        reply_markup: updatedKeyboard
                     }
                 );
 

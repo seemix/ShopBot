@@ -7,7 +7,7 @@ const { saveUser, getUser } = require('../db/services');
 module.exports = function startHandler(bot) {
 
     const sendMainMenu = async (chatId, userName) => {
-        await bot.sendMessage(chatId, userName+t.welcome, { reply_markup: rootMenu });
+        await bot.sendMessage(chatId, userName + t.welcome, { reply_markup: rootMenu });
         await bot.sendMessage(chatId, '👇', { reply_markup: mainMenu });
     };
 
@@ -27,12 +27,12 @@ module.exports = function startHandler(bot) {
                 }
             });
         } else {
-            sendMainMenu(chatId,user.name+'! ');
+            await sendMainMenu(chatId, user.name + '! ');
         }
     });
 
     // Обробник отриманого контакту
-    bot.on('contact', (msg) => {
+    bot.on('contact', async (msg) => {
         const chatId = msg.chat.id;
 
         if (!msg.contact || msg.contact.user_id !== chatId) {
@@ -40,8 +40,8 @@ module.exports = function startHandler(bot) {
         }
 
         const phone = msg.contact.phone_number;
-        saveUser(String(chatId), phone);
-        sendMainMenu(chatId,'');
+        await saveUser(String(chatId), phone);
+        await sendMainMenu(chatId, '');
     });
 
     bot.on('message', (msg) => {

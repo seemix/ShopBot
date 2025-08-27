@@ -12,7 +12,7 @@ async function saveUser(telegramId, phone) {
 }
 
 async function getUser(telegramId) {
-    return await User.findOne({ telegram_id: telegramId }).lean();
+    return User.findOne({ telegram_id: telegramId }).lean();
 }
 
 async function updateUserData(telegramId, field, value) {

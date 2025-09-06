@@ -33,11 +33,11 @@ module.exports = function cartHandler(bot) {
         const isClear = data === 'clear_cart';
 
         if (!(isInc || isDec || isDel || isClear)) {
-            return; // не наш callback — ігноруємо
+            return;
         }
 
         try {
-            // миттєво відповідаємо, щоб не ловити timeout
+
             await bot.answerCallbackQuery(query.id);
 
             if (isInc) {

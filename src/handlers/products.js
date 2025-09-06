@@ -3,6 +3,7 @@ const T = require('../locales/ru');
 const woo = require('../woo');
 const db = require('../db/services');
 const qtyKeyboard = require('../keyboards/quantityMenu');
+const paginationKeyboard = require('../keyboards/paginationMenu');
 
 module.exports = function productsHandler(bot) {
     bot.on('callback_query', async (query) => {
@@ -11,20 +12,29 @@ module.exports = function productsHandler(bot) {
         // Показ товарів за брендом або категорією
         if (query.data.startsWith('brand_') || query.data.startsWith('cat_')) {
             try {
-                let products = [];
+                let params = {};
+                let page;
+                let products;
+                const parts = query.data.split('_');
                 if (query.data.startsWith('brand_')) {
                     const brandId = query.data.replace('brand_', '');
-                    products = await woo.getProducts({ brand: brandId });
+                    params = { ...params, brand: brandId };
+
                 } else if (query.data.startsWith('cat_')) {
                     const catId = query.data.replace('cat_', '');
-                    products = await woo.getProducts({ category: catId });
+                    params = { ...params, category: catId };
                 }
+                if (parts.includes('page')) {
+                    page = parseInt(parts[parts.indexOf('page') + 1], 10);
+                } else page = 1;
+                params = { ...params, page };
+                products = await woo.getProducts(params);
 
-                if (!products.length) {
+                if (!products.data.length) {
                     return bot.sendMessage(chatId, t.goodsNotFound);
                 }
 
-                for (const p of products) {
+                for (const p of products.data) {
                     let caption = `*${p.name}*  💵 ${p.price} ${T.Currency}`;
                     if (p.short_description) {
                         caption += `\n\n${p.short_description.replace(/<\/?[^>]+(>|$)/g, '')}`;
@@ -44,6 +54,12 @@ module.exports = function productsHandler(bot) {
                     } else {
                         await bot.sendMessage(chatId, caption, opts);
                     }
+                }
+                if (products.pages > 1) {
+                    await bot.sendMessage(chatId, `*${t.page}*`, {
+                        parse_mode: 'Markdown',
+                        reply_markup: paginationKeyboard(Number(products.pages), query.data, page)
+                    });
                 }
             } catch (err) {
                 console.error(T.Error, err.message);

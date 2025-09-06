@@ -15,7 +15,7 @@ const WC_API = axios.create({
 
 async function getProducts(params = {}) {
     const res = await WC_API.get('/products', { params });
-    return res.data;
+    return { data: res.data, pages: res.headers['x-wp-totalpages'] };
 }
 
 async function getProductById(id) {

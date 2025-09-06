@@ -21,7 +21,6 @@ async function updateUserData(telegramId, field, value) {
     await User.updateOne({ telegram_id: telegramId }, update);
 }
 
-// --- CART ---
 async function addToCart(telegramId, productId, quantity = 1, name = null, price = null) {
     const existing = await Cart.findOne({ telegram_id: telegramId, product_id: productId });
 

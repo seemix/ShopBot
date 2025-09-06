@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
     address: String,
 });
 
-// Кошик
 const cartSchema = new mongoose.Schema({
     telegram_id: { type: String, required: true },
     product_id: { type: String, required: true },
